@@ -1,0 +1,25 @@
+# -*- mode: org; -*-
+
+* To do list for Cosmotron
+*** TODO Figure out how to use InputStreams/OutputStreams with HttpClient.
+*** TODO Static resources should be served from a configurable location, not the CWD.
+*** TODO Figure out how to insert an XSL stylesheet link into service and feed documents
+*** TODO Switch to using Tomcat rather than using Jetty
+*** TODO Add the joptparser stuff from Atomic
+*** TODO Abstract out the Main class stuff for Cosmotron and Atomic into a separate project
+*** TODO Abstract out the build stuff into a separate project that generates configure.ac, Makefile.am, and all the rest
+    - [ ] configure.ac
+    - [ ] Makefile.am
+    - [ ] creates lib, doc, src directories
+    - [ ] copies in missing files (COPYING, etc.)
+    - [ ] touches README, NEWS, AUTHORS, ChangeLog, etc.
+
+*** TODO Prune obsolete heads from Bitbucket and do the same in Atomic.
+*** TODO Now that I figured out how to do XSLT (In Atomic, though I'm not using that anymore), put that into Cosmotron.
+*** TODO Use the reflective features to be added to Atomic in order to figure out how to generate a form dynamically.
+*** TODO Should be able to add new rows to a table.
+*** TODO And delete existing rows.
+* Development Environment notes
+*** Needs autoconf-archive installed
+*** After installing autoconf-archive, may need to do autoreconf
+*** Doesn't compile with gcj, only with a javac compatible compiler.
