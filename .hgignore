@@ -28,3 +28,5 @@ java/*.class
 classjava.stamp
 cosmotron
 *.*~
+*.log
+target
