@@ -1,3 +1,5 @@
+package org.neptunestation.calutron;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -6,6 +8,7 @@ import org.apache.olingo.odata2.api.commons.*;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
+import org.neptunestation.calutron.exceptions.*;
 
 public class Calutron {
     private static final String HTTP_METHOD_PUT = "PUT";
@@ -36,18 +39,6 @@ public class Calutron {
         String getCommandString ();
         void setCommandString (String command);
         void execute ();}
-
-    private static class NullArgumentException extends IllegalArgumentException {
-        public NullArgumentException (Object param) {
-            super(String.format("The `%s' parameter cannot be null.", param));}
-        public NullArgumentException (Object param, Throwable cause) {
-            super(String.format("The `%s' parameter cannot be null.", param), cause);}
-        public NullArgumentException (Throwable cause) {
-            super(cause);}}
-
-    private static class StoppedException extends RuntimeException {
-        public StoppedException (Throwable t) {
-            super(t);}}
 
     private static abstract class AbstractCommand implements Command {
         String commandString = null;
