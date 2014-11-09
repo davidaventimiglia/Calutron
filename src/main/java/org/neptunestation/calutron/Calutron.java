@@ -8,6 +8,7 @@ import org.apache.olingo.odata2.api.commons.*;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
+import org.neptunestation.calutron.commands.*;
 import org.neptunestation.calutron.model.*;
 
 public class Calutron implements Interpreter {
@@ -30,34 +31,12 @@ public class Calutron implements Interpreter {
         Console console = System.console();
         if (console==null) System.exit(1);
         Calutron calutron = new Calutron(console);
-        calutron.addCommands(new AbstractCommand(calutron, "quit") {
-                public void execute () {
-                    System.exit(0);}},
-            new AbstractCommand(calutron, "help") {
-                public void execute () {
-                    for (String s : getInterpreter().getCommands().keySet()) getInterpreter().getConsole().printf("%s\n", s);}},
-            new AbstractCommand(calutron, "set password") {
-                public void execute () {
-                    getInterpreter().setSetting("PASSWORD", new String(getInterpreter().getConsole().readPassword("%s", "Password:")));}},
-            new AbstractCommand(calutron, "set url") {
-                public void execute () {
-                    try {getInterpreter().setSetting("SERVICE_URL", new URL(getInterpreter().getConsole().readLine("Service URL: ")).toExternalForm());}
-                    catch (MalformedURLException e) {getInterpreter().getConsole().printf("%s\n", "Invalid URL");}}},
-            new AbstractCommand(calutron, "show entity sets") {
-                public void execute () {
-                    if (getInterpreter().getSetting("SERVICE_URL")==null) getInterpreter().getConsole().printf("%s\n", "URL has not been set.");
-                    if (getInterpreter().getSetting("USERNAME")==null) getInterpreter().getConsole().printf("%s\n", "USERNAME has not been set.");
-                    if (getInterpreter().getSetting("PASSWORD")==null) getInterpreter().getConsole().printf("%s\n", "PASSWORD has not been set.");
-                    SortedSet<String> names = new TreeSet<String>();
-                    try {
-                        for (EdmEntitySet e : getInterpreter().readEdm(getInterpreter().getSetting("SERVICE_URL"),
-                                                                       getInterpreter().getSetting("USERNAME"),
-                                                                       getInterpreter().getSetting("PASSWORD")).getEntitySets()) names.add(e.getName());
-                        for (String name : names) getInterpreter().getConsole().printf("%s\n", name);}
-                    catch (Throwable t) {try {getInterpreter().getConsole().printf("%s\n", "Error performing operation");} catch (Throwable t2) {}}}},
-            new AbstractCommand(calutron, "set username") {
-                public void execute () {
-                    getInterpreter().setSetting("USERNAME", getInterpreter().getConsole().readLine("Username: "));}});
+        calutron.addCommands(new Quit(calutron, "quit"),
+                             new Help(calutron, "help"),
+                             new SetPassword(calutron, "set password"),
+                             new SetUrl(calutron, "set url"),
+                             new ShowEntitySets(calutron, "show entity sets"),
+                             new SetUsername(calutron, "set username"));
         try {calutron.start();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
