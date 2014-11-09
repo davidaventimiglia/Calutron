@@ -8,6 +8,7 @@ import org.apache.olingo.odata2.api.commons.*;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
+import org.neptunestation.calutron.api.*;
 import org.neptunestation.calutron.exceptions.*;
 
 public class Calutron {
@@ -26,19 +27,12 @@ public class Calutron {
     private static final String SEPARATOR = "/";
     private static final boolean PRINT_RAW_CONTENT = true;
 
-    // State
-
     private static String SERVICE_URL = null;
-    private static String CONTENT_TYPE = null;
+    private static String CONTENT_TYPE = APPLICATION_XML;
     private static String USERNAME = null;
     private static String PASSWORD = null;
 
-    // Commands
-
-    private static interface Command {
-        String getCommandString ();
-        void setCommandString (String command);
-        void execute ();}
+    // Nested types
 
     private static abstract class AbstractCommand implements Command {
         String commandString = null;
@@ -62,21 +56,19 @@ public class Calutron {
             if (command==null) throw new NullArgumentException("command");
             commandString = command.replaceAll("\\s+", " ").toUpperCase().trim();}}
 
-    private static class CommandMap extends TreeMap<String, Command> {
-        public void add (final Command command) {
-            if (command==null) throw new NullArgumentException("command");
-            super.put(command.getCommandString(), command);}
-        public void add (final Command... commands) {
-            if (commands==null) throw new NullArgumentException("commands");
-            for (int i=0; i<commands.length; i++) add(commands[i]);}}
+    // State
 
     protected final CommandMap commands = new CommandMap();
     protected Console console = null;
     protected final Properties settings = new Properties();
 
-    public CommandMap getCommands () {return commands;}
+   // API
 
-    public Properties getSettings () {return settings;}
+    public CommandMap getCommands () {
+        return commands;}
+
+    public Properties getSettings () {
+        return settings;}
 
     public String getSetting (final String name) {
         return getSettings().getProperty(name);}
@@ -86,7 +78,14 @@ public class Calutron {
         if (value==null) throw new NullArgumentException("value");
         getSettings().setProperty(name, value);}
 
-    public Console getConsole () {return console;}
+    public Console getConsole () {
+        return console;}
+
+    public String getPrompt () {
+        return String.format("%s:%s@%s$ ",
+                             getSetting("USERNAME")==null ? "[username]" : getSetting("USERNAME"),
+                             getSetting("PASSWORD")==null ? "[password]" : "****",
+                             getSetting("SERVICE_URL")==null ? "[url]" : getSetting("SERVICE_URL"));}
 
     public Calutron (final Console console) {
         this.console = console;}
@@ -108,7 +107,7 @@ public class Calutron {
         return new AbstractCommand(this, "default") {public void execute () {getConsole().printf("%s\n", "Command not found");}};}
 
     public void start () {
-        while (true) try {getCommand(getConsole().readLine("CALUTRON>").replaceAll("\\s+", " ").trim()).execute();} catch (NullPointerException e) {throw new StoppedException(e);}}
+        while (true) getCommand(getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}
 
     // Main Loop
 
@@ -116,43 +115,62 @@ public class Calutron {
         Console console = System.console();
         if (console==null) System.exit(1);
         Calutron calutron = new Calutron(console);
-        calutron.addCommands(new AbstractCommand(calutron, "quit") {public void execute () {System.exit(0);}},
-                             new AbstractCommand(calutron, "help") {public void execute () {for (String s : getCalutron().getCommands().keySet()) getCalutron().getConsole().printf("%s\n", s);}},
-                             new AbstractCommand(calutron, "show commands") {public void execute () {for (String s : getCalutron().getCommands().keySet()) getCalutron().getConsole().printf("%s\n", s);}},
-                             new AbstractCommand(calutron, "set password") {public void execute () {getCalutron().setSetting("PASSWORD", new String(getCalutron().getConsole().readPassword("%s", "Password:")));}},
-                             new AbstractCommand(calutron, "set service url") {public void execute () {getCalutron().setSetting("SERVICE_URL", getCalutron().getConsole().readLine("Service URL: "));}},
-                             new AbstractCommand(calutron, "show service doc") {public void execute () {}},
-                             new AbstractCommand(calutron, "show metadata") {public void execute () {try {getCalutron().getConsole().printf("%s\n", readEdm(getCalutron().getSettings().getProperty("SERVICE_URL")));} catch (Throwable t) {throw new RuntimeException(t);}}},
-                             new AbstractCommand(calutron, "set username") {public void execute () {getCalutron().setSetting("USERNAME", getCalutron().getConsole().readLine("Username: "));}});
+        calutron.addCommands(new AbstractCommand(calutron, "quit") {
+                public void execute () {
+                    System.exit(0);}},
+            new AbstractCommand(calutron, "help") {
+                public void execute () {
+                    for (String s : getCalutron().getCommands().keySet()) getCalutron().getConsole().printf("%s\n", s);}},
+            new AbstractCommand(calutron, "set password") {
+                public void execute () {
+                    getCalutron().setSetting("PASSWORD", new String(getCalutron().getConsole().readPassword("%s", "Password:")));}},
+            new AbstractCommand(calutron, "set url") {
+                public void execute () {
+                    getCalutron().setSetting("SERVICE_URL", getCalutron().getConsole().readLine("Service URL: "));}},
+            new AbstractCommand(calutron, "show entity sets") {
+                public void execute () {
+                    if (getCalutron().getSetting("SERVICE_URL")==null) getCalutron().getConsole().printf("%s\n", "URL has not been set.");
+                    if (getCalutron().getSetting("USERNAME")==null) getCalutron().getConsole().printf("%s\n", "USERNAME has not been set.");
+                    if (getCalutron().getSetting("PASSWORD")==null) getCalutron().getConsole().printf("%s\n", "PASSWORD has not been set.");
+                    SortedSet<String> names = new TreeSet<String>();
+                    try {
+                        for (EdmEntitySet e : readEdm(getCalutron().getSetting("SERVICE_URL"),
+                                                      getCalutron().getSetting("USERNAME"),
+                                                      getCalutron().getSetting("PASSWORD")).getEntitySets()) names.add(e.getName());
+                        for (String name : names) getCalutron().getConsole().printf("%s\n", name);}
+                    catch (Throwable t) {try {getCalutron().getConsole().printf("%s\n", "Error performing operation");} catch (Throwable t2) {}}}},
+            new AbstractCommand(calutron, "set username") {
+                public void execute () {
+                    getCalutron().setSetting("USERNAME", getCalutron().getConsole().readLine("Username: "));}});
         try {calutron.start();}
         catch (StoppedException e) {System.exit(0);}
-        catch (Throwable t) {System.exit(1);}}
+        catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
 
     // Helper methods
 
-    private static Edm readEdm (String serviceUrl) throws IOException, ODataException {
-        return EntityProvider.readMetadata(execute(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET), false);}
+    private static Edm readEdm (String serviceUrl, String username, String password) throws IOException, ODataException {
+        return EntityProvider.readMetadata(execute(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
 
-    private static InputStream execute (String relativeUri, String contentType, String httpMethod) throws IOException {
-        HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod);
+    private static InputStream execute (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+        HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         InputStream content = connection.getInputStream();
         content = logRawContent(httpMethod + " request:\n  ", content, "\n");
         return content;}
 
-    private static HttpURLConnection connect (String relativeUri, String contentType, String httpMethod) throws IOException {
-        HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod);
+    private static HttpURLConnection connect (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+        HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         return connection;}
 
-    private static HttpURLConnection initializeConnection (String absolutUri, String contentType, String httpMethod) throws MalformedURLException, IOException {
-        URL url = new URL(absolutUri);
+    private static HttpURLConnection initializeConnection (String absoluteUri, String contentType, String httpMethod, String username, String password) throws MalformedURLException, IOException {
+        URL url = new URL(absoluteUri);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(httpMethod);
         connection.setRequestProperty(HTTP_HEADER_ACCEPT, contentType);
-        String creds = String.format("%s:%s", USERNAME, PASSWORD);
+        String creds = String.format("%s:%s", username, password);
         String base64 = DatatypeConverter.printBase64Binary(creds.getBytes());
         connection.setRequestProperty("Authorization", "Basic " + base64);
         if (HTTP_METHOD_POST.equals(httpMethod) || HTTP_METHOD_PUT.equals(httpMethod)) {
@@ -169,7 +187,6 @@ public class Calutron {
         if (PRINT_RAW_CONTENT) {
             byte[] buffer = streamToArray(content);
             content.close();
-            System.out.println(prefix + new String(buffer) + postfix);
             return new ByteArrayInputStream(buffer);}
         return content;}
 
