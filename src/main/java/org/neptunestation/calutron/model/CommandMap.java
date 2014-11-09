@@ -1,4 +1,4 @@
-package org.neptunestation.calutron.api;
+package org.neptunestation.calutron.model;
 
 import java.util.*;
 import org.neptunestation.calutron.exceptions.*;

@@ -1,4 +1,4 @@
-package org.neptunestation.calutron.exceptions;
+package org.neptunestation.calutron.model;
 
 public class StoppedException extends RuntimeException {
     public StoppedException (Throwable t) {

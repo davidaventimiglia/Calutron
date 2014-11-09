@@ -1,4 +1,4 @@
-package org.neptunestation.calutron.api;
+package org.neptunestation.calutron.model;
 
 public interface Command {
     String getCommandString ();

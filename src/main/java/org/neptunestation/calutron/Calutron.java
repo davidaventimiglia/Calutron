@@ -8,8 +8,7 @@ import org.apache.olingo.odata2.api.commons.*;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
-import org.neptunestation.calutron.api.*;
-import org.neptunestation.calutron.exceptions.*;
+import org.neptunestation.calutron.model.*;
 
 public class Calutron {
     private static final String HTTP_METHOD_PUT = "PUT";

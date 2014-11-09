@@ -1,4 +1,4 @@
-package org.neptunestation.calutron.exceptions;
+package org.neptunestation.calutron.model;
 
 public class NullArgumentException extends IllegalArgumentException {
     public NullArgumentException (Object param) {
