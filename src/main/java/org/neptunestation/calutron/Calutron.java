@@ -25,13 +25,22 @@ public class Calutron implements Interpreter {
     private static final boolean PRINT_RAW_CONTENT = false;
     private static final String CONTENT_TYPE = APPLICATION_XML;
 
+    // State
+
+    protected final CommandMap commands = new CommandMap();
+    protected final Properties settings = new Properties();
+    protected Console console = null;
+    protected Edm edm = null;
+
     // Main Loop
 
     public static void main (String[] args) throws IOException, ODataException {
         Console console = System.console();
         if (console==null) System.exit(1);
         Calutron calutron = new Calutron(console);
-        calutron.addCommands(new Quit(calutron, "quit"),
+        calutron.addCommands(new GetEdm(calutron, "rehash"),
+                             new Connect(calutron, "connect"),
+                             new Quit(calutron, "quit"),
                              new Help(calutron, "help"),
                              new SetPassword(calutron, "set password"),
                              new SetUrl(calutron, "set url"),
@@ -40,12 +49,6 @@ public class Calutron implements Interpreter {
         try {calutron.start();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
-
-    // State
-
-    protected final CommandMap commands = new CommandMap();
-    protected final Properties settings = new Properties();
-    protected Console console = null;
 
     // Constructors
 
@@ -102,26 +105,31 @@ public class Calutron implements Interpreter {
     @Override public void start () {
         while (true) getCommand(getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}
 
-
     // Helper methods
 
-    @Override public Edm readEdm (String serviceUrl, String username, String password) throws IOException, ODataException {
+    @Override public Edm readEdm (final String serviceUrl, final String username, final String password) throws IOException, ODataException {
         return EntityProvider.readMetadata(execute(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
 
-    protected InputStream execute (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+    @Override public void setEdm (final Edm edm) {
+        this.edm = edm;}
+
+    @Override public Edm getEdm () {
+        return this.edm;}
+
+    protected InputStream execute (final String relativeUri, final String contentType, final String httpMethod, final String username, final String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         InputStream content = connection.getInputStream();
         return content;}
 
-    protected HttpURLConnection connect (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+    protected HttpURLConnection connect (final String relativeUri, final String contentType, final String httpMethod, final String username, final String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         return connection;}
 
-    protected HttpURLConnection initializeConnection (String absoluteUri, String contentType, String httpMethod, String username, String password) throws MalformedURLException, IOException {
+    protected HttpURLConnection initializeConnection (final String absoluteUri, final String contentType, final String httpMethod, final String username, final String password) throws MalformedURLException, IOException {
         URL url = new URL(absoluteUri);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(httpMethod);
@@ -134,7 +142,7 @@ public class Calutron implements Interpreter {
             connection.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, contentType);}
         return connection;}
 
-    protected HttpStatusCodes checkStatus (HttpURLConnection connection) throws IOException {
+    protected HttpStatusCodes checkStatus (final HttpURLConnection connection) throws IOException {
         HttpStatusCodes httpStatusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
         if (400 <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= 599) throw new RuntimeException("Http Connection failed with status " + httpStatusCode.getStatusCode() + " " + httpStatusCode.toString());
         return httpStatusCode;}}
