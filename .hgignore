@@ -30,3 +30,7 @@ cosmotron
 *.*~
 *.log
 target
+GPATH
+GRTAGS
+GSYMS
+GTAGS
