@@ -18,19 +18,12 @@ public class Calutron {
     private static final String HTTP_METHOD_DELETE = "DELETE";
     private static final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
     private static final String HTTP_HEADER_ACCEPT = "Accept";
-    private static final String APPLICATION_JSON = "application/json";
     private static final String APPLICATION_XML = "application/xml";
     private static final String APPLICATION_ATOM_XML = "application/atom+xml";
     private static final String APPLICATION_FORM = "application/x-www-form-urlencoded";
     private static final String METADATA = "$metadata";
-    private static final String INDEX = "/index.jsp";
-    private static final String SEPARATOR = "/";
-    private static final boolean PRINT_RAW_CONTENT = true;
-
-    private static String SERVICE_URL = null;
-    private static String CONTENT_TYPE = APPLICATION_XML;
-    private static String USERNAME = null;
-    private static String PASSWORD = null;
+    private static final boolean PRINT_RAW_CONTENT = false;
+    private static final String CONTENT_TYPE = APPLICATION_XML;
 
     // Nested types
 
@@ -59,8 +52,8 @@ public class Calutron {
     // State
 
     protected final CommandMap commands = new CommandMap();
-    protected Console console = null;
     protected final Properties settings = new Properties();
+    protected Console console = null;
 
    // API
 
@@ -82,10 +75,16 @@ public class Calutron {
         return console;}
 
     public String getPrompt () {
-        return String.format("%s:%s@%s$ ",
+        return String.format("%s:%s@%s> ",
                              getSetting("USERNAME")==null ? "[username]" : getSetting("USERNAME"),
                              getSetting("PASSWORD")==null ? "[password]" : "****",
-                             getSetting("SERVICE_URL")==null ? "[url]" : getSetting("SERVICE_URL"));}
+                             getSetting("SERVICE_URL")==null ? "[url]" : getEndPointName(getSetting("SERVICE_URL"))).toUpperCase();}
+
+    public String getEndPointName (String url) {
+        URL u = null;
+        try {u = new URL(url);} catch (MalformedURLException e) {return "[BAD URL]";}
+        if (u.getPort()==80) return String.format("%s/%s", u.getHost(), u.getPath());
+        return String.format("%s:%s/%s", u.getHost(), u.getPort(), u.getPath());}
 
     public Calutron (final Console console) {
         this.console = console;}
@@ -126,7 +125,8 @@ public class Calutron {
                     getCalutron().setSetting("PASSWORD", new String(getCalutron().getConsole().readPassword("%s", "Password:")));}},
             new AbstractCommand(calutron, "set url") {
                 public void execute () {
-                    getCalutron().setSetting("SERVICE_URL", getCalutron().getConsole().readLine("Service URL: "));}},
+                    try {getCalutron().setSetting("SERVICE_URL", new URL(getCalutron().getConsole().readLine("Service URL: ")).toExternalForm());}
+                    catch (MalformedURLException e) {getCalutron().getConsole().printf("%s\n", "Invalid URL");}}},
             new AbstractCommand(calutron, "show entity sets") {
                 public void execute () {
                     if (getCalutron().getSetting("SERVICE_URL")==null) getCalutron().getConsole().printf("%s\n", "URL has not been set.");
@@ -134,9 +134,9 @@ public class Calutron {
                     if (getCalutron().getSetting("PASSWORD")==null) getCalutron().getConsole().printf("%s\n", "PASSWORD has not been set.");
                     SortedSet<String> names = new TreeSet<String>();
                     try {
-                        for (EdmEntitySet e : readEdm(getCalutron().getSetting("SERVICE_URL"),
-                                                      getCalutron().getSetting("USERNAME"),
-                                                      getCalutron().getSetting("PASSWORD")).getEntitySets()) names.add(e.getName());
+                        for (EdmEntitySet e : getCalutron().readEdm(getCalutron().getSetting("SERVICE_URL"),
+                                                                    getCalutron().getSetting("USERNAME"),
+                                                                    getCalutron().getSetting("PASSWORD")).getEntitySets()) names.add(e.getName());
                         for (String name : names) getCalutron().getConsole().printf("%s\n", name);}
                     catch (Throwable t) {try {getCalutron().getConsole().printf("%s\n", "Error performing operation");} catch (Throwable t2) {}}}},
             new AbstractCommand(calutron, "set username") {
@@ -148,24 +148,23 @@ public class Calutron {
 
     // Helper methods
 
-    private static Edm readEdm (String serviceUrl, String username, String password) throws IOException, ODataException {
+    protected Edm readEdm (String serviceUrl, String username, String password) throws IOException, ODataException {
         return EntityProvider.readMetadata(execute(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
 
-    private static InputStream execute (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+    protected InputStream execute (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         InputStream content = connection.getInputStream();
-        content = logRawContent(httpMethod + " request:\n  ", content, "\n");
         return content;}
 
-    private static HttpURLConnection connect (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
+    protected HttpURLConnection connect (String relativeUri, String contentType, String httpMethod, String username, String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         return connection;}
 
-    private static HttpURLConnection initializeConnection (String absoluteUri, String contentType, String httpMethod, String username, String password) throws MalformedURLException, IOException {
+    protected HttpURLConnection initializeConnection (String absoluteUri, String contentType, String httpMethod, String username, String password) throws MalformedURLException, IOException {
         URL url = new URL(absoluteUri);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(httpMethod);
@@ -178,26 +177,7 @@ public class Calutron {
             connection.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, contentType);}
         return connection;}
 
-    private static HttpStatusCodes checkStatus (HttpURLConnection connection) throws IOException {
+    protected HttpStatusCodes checkStatus (HttpURLConnection connection) throws IOException {
         HttpStatusCodes httpStatusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
         if (400 <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= 599) throw new RuntimeException("Http Connection failed with status " + httpStatusCode.getStatusCode() + " " + httpStatusCode.toString());
-        return httpStatusCode;}
-
-    private static InputStream logRawContent (String prefix, InputStream content, String postfix) throws IOException {
-        if (PRINT_RAW_CONTENT) {
-            byte[] buffer = streamToArray(content);
-            content.close();
-            return new ByteArrayInputStream(buffer);}
-        return content;}
-
-    private static byte[] streamToArray (InputStream stream) throws IOException {
-        byte[] result = new byte[0];
-        byte[] tmp = new byte[8192];
-        int readCount = stream.read(tmp);
-        while (readCount >= 0) {
-            byte[] innerTmp = new byte[result.length + readCount];
-            System.arraycopy(result, 0, innerTmp, 0, result.length);
-            System.arraycopy(tmp, 0, innerTmp, result.length, readCount);
-            result = innerTmp;
-            readCount = stream.read(tmp);}
-        return result;}}
+        return httpStatusCode;}}
