@@ -11,6 +11,9 @@ public abstract class AbstractCommand implements Command {
         if (command==null) throw new NullArgumentException("command");
         this.interpreter = interpreter;
         setCommandString(command);}
+    @Override public boolean acceptsCommandString (final String command) {
+        if (command==null) throw new NullArgumentException("command");
+        return command.equalsIgnoreCase(getCommandString());}
     @Override public void setInterpreter (Interpreter interpreter) {
         if (interpreter==null) throw new NullArgumentException("interpreter");
         this.interpreter = interpreter;}

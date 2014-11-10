@@ -27,7 +27,7 @@ public class Calutron implements Interpreter {
 
     // State
 
-    protected final CommandMap commands = new CommandMap();
+    protected final CommandSet commands = new CommandSet();
     protected final Properties settings = new Properties();
     protected Console console = null;
     protected Edm edm = null;
@@ -61,7 +61,7 @@ public class Calutron implements Interpreter {
 
    // API
 
-    @Override public CommandMap getCommands () {
+    @Override public CommandSet getCommands () {
         return commands;}
 
     @Override public Properties getSettings () {
@@ -99,7 +99,7 @@ public class Calutron implements Interpreter {
 
     @Override public Command getCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
-        if (getCommands().containsKey(name.toUpperCase())) return getCommands().get(name.toUpperCase());
+        if (getCommands().get(name)!=null) return getCommands().get(name);
         return new AbstractCommand(this, "default") {@Override public void execute () {getConsole().printf("%s\n", "Command not found");}};}
 
     @Override public void start () {

@@ -5,7 +5,7 @@ import java.util.*;
 import org.apache.olingo.odata2.api.edm.*;
 
 public interface Interpreter extends ODataCommand {
-    CommandMap getCommands ();
+    CommandSet getCommands ();
     Properties getSettings ();
     String getSetting (final String name);
     void setSetting (final String name, final String value);
