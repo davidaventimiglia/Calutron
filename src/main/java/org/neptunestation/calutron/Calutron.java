@@ -47,7 +47,7 @@ public class Calutron extends AbstractCommand implements CalutronModel {
                              new ShowEntitySets(calutron, "show entity sets"),
                              new SetUsername(calutron, "set username"));
         Interpreter interpreter = new Interpreter(calutron, "interpreter");
-        try {calutron.execute();}
+        try {interpreter.execute();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
 
