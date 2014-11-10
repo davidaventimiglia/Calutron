@@ -6,5 +6,5 @@ import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
 import org.apache.olingo.odata2.api.exception.*;
 
-public interface ODataCommand {
+public interface ODataModel {
     Edm readEdm (String serviceUrl, String username, String password) throws IOException, ODataException;}

@@ -11,7 +11,7 @@ import org.apache.olingo.odata2.api.exception.*;
 import org.neptunestation.calutron.commands.*;
 import org.neptunestation.calutron.model.*;
 
-public class Calutron implements Interpreter {
+public class Calutron extends AbstractCommand implements CalutronModel {
     private static final String HTTP_METHOD_PUT = "PUT";
     private static final String HTTP_METHOD_POST = "POST";
     private static final String HTTP_METHOD_GET = "GET";
@@ -46,34 +46,25 @@ public class Calutron implements Interpreter {
                              new SetUrl(calutron, "set url"),
                              new ShowEntitySets(calutron, "show entity sets"),
                              new SetUsername(calutron, "set username"));
-        try {calutron.start();}
+        Interpreter interpreter = new Interpreter(calutron, "interpreter");
+        try {calutron.execute();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
 
     // Constructors
 
     public Calutron (final Console console) {
+        super("calutron");
         this.console = console;}
 
     public Calutron (final Console console, final Properties settings) {
         this(console);
         this.settings.putAll(settings);}
 
-   // API
+    // Interpreter API
 
-    @Override public CommandSet getCommands () {
-        return commands;}
-
-    @Override public Properties getSettings () {
-        return settings;}
-
-    @Override public String getSetting (final String name) {
-        return getSettings().getProperty(name);}
-
-    @Override public void setSetting (final String name, final String value) {
-        if (name==null) throw new NullArgumentException("name");
-        if (value==null) throw new NullArgumentException("value");
-        getSettings().setProperty(name, value);}
+    @Override public void execute () {
+        while (true) getCommand(getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}
 
     @Override public Console getConsole () {
         return console;}
@@ -90,25 +81,36 @@ public class Calutron implements Interpreter {
         if (u.getPort()==80) return String.format("%s/%s", u.getHost(), u.getPath());
         return String.format("%s:%s/%s", u.getHost(), u.getPort(), u.getPath());}
 
-    @Override public void executeCommand (final String name) {
+    public void executeCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
         getCommand(name).execute();}
     
-    @Override public void addCommands (final Command... commands) {
-        this.commands.add(commands);}
+    // Model API
 
     @Override public Command getCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
         if (getCommands().get(name)!=null) return getCommands().get(name);
         return new AbstractCommand(this, "default") {@Override public void execute () {getConsole().printf("%s\n", "Command not found");}};}
 
-    @Override public void start () {
-        while (true) getCommand(getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}
+    @Override public CommandSet getCommands () {
+        return commands;}
 
-    // Helper methods
+    @Override public void addCommands (final Command... commands) {
+        this.commands.add(commands);}
+
+    @Override public Properties getSettings () {
+        return settings;}
+
+    @Override public String getSetting (final String name) {
+        return getSettings().getProperty(name);}
+
+    @Override public void setSetting (final String name, final String value) {
+        if (name==null) throw new NullArgumentException("name");
+        if (value==null) throw new NullArgumentException("value");
+        getSettings().setProperty(name, value);}
 
     @Override public Edm readEdm (final String serviceUrl, final String username, final String password) throws IOException, ODataException {
-        return EntityProvider.readMetadata(execute(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
+        return EntityProvider.readMetadata(call(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
 
     @Override public void setEdm (final Edm edm) {
         this.edm = edm;}
@@ -116,7 +118,9 @@ public class Calutron implements Interpreter {
     @Override public Edm getEdm () {
         return this.edm;}
 
-    protected InputStream execute (final String relativeUri, final String contentType, final String httpMethod, final String username, final String password) throws IOException {
+    // ODATA Communication methods
+
+    protected InputStream call (final String relativeUri, final String contentType, final String httpMethod, final String username, final String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);

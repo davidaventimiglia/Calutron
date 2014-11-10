@@ -3,6 +3,6 @@ package org.neptunestation.calutron.commands;
 import org.neptunestation.calutron.model.*;
 
 public class SetUsername extends AbstractCommand {
-    public SetUsername (Interpreter interpreter, String commandString) {super(interpreter, commandString);}
+    public SetUsername (CalutronModel calutronModel, String commandString) {super(calutronModel, commandString);}
     @Override public void execute () {
-        getInterpreter().setSetting("USERNAME", getInterpreter().getConsole().readLine("Username: "));}}
+        getCalutronModel().setSetting("USERNAME", getCalutronModel().getConsole().readLine("Username: "));}}

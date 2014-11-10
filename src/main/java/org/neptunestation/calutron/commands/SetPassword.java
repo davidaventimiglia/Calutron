@@ -3,6 +3,6 @@ package org.neptunestation.calutron.commands;
 import org.neptunestation.calutron.model.*;
 
 public class SetPassword extends AbstractCommand {
-    public SetPassword (Interpreter interpreter, String commandString) {super(interpreter, commandString);}
+    public SetPassword (CalutronModel calutronModel, String commandString) {super(calutronModel, commandString);}
     @Override public void execute () {
-        getInterpreter().setSetting("PASSWORD", new String(getInterpreter().getConsole().readPassword("%s", "Password:")));}}
+        getCalutronModel().setSetting("PASSWORD", new String(getCalutronModel().getConsole().readPassword("%s", "Password:")));}}

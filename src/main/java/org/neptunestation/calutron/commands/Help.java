@@ -3,6 +3,6 @@ package org.neptunestation.calutron.commands;
 import org.neptunestation.calutron.model.*;
 
 public class Help extends AbstractCommand {
-    public Help (Interpreter interpreter, String commandString) {super(interpreter, commandString);}
+    public Help (CalutronModel calutronModel, String commandString) {super(calutronModel, commandString);}
     @Override public void execute () {
-        for (Command c : getInterpreter().getCommands()) getInterpreter().getConsole().printf("%s\n", c.getCommandString());}}
+        for (Command c : getCalutronModel().getCommands()) getCalutronModel().getConsole().printf("%s\n", c.getCommandString());}}
