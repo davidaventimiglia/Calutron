@@ -6,7 +6,8 @@ import org.apache.olingo.odata2.api.edm.*;
 import org.neptunestation.calutron.model.*;
 
 public class Interpreter extends AbstractCommand {
-    public Interpreter (CalutronModel calutronModel, String commandString) {super(calutronModel, commandString);}
+    public Interpreter (CalutronModel calutronModel, String commandString) {
+        super(calutronModel, commandString);}
     protected String getEndPointName (String url) {
         URL u = null;
         try {u = new URL(url);} catch (MalformedURLException e) {return "[BAD URL]";}
@@ -18,4 +19,4 @@ public class Interpreter extends AbstractCommand {
                              getCalutronModel().getSetting("PASSWORD")==null ? "[password]" : "****",
                              getCalutronModel().getSetting("SERVICE_URL")==null ? "[url]" : getEndPointName(getCalutronModel().getSetting("SERVICE_URL"))).toUpperCase();}
     @Override public void execute () {
-        while (true) getCalutronModel().getCommand(getCalutronModel().getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}}
+        while (true) getCalutronModel().getCommand(System.console().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}}

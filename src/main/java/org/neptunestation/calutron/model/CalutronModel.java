@@ -9,8 +9,8 @@ public interface CalutronModel extends ODataModel {
     Properties getSettings ();
     String getSetting (final String name);
     void setSetting (final String name, final String value);
-    Console getConsole ();
-    String getPrompt ();
+    // Console getConsole ();
+    // String getPrompt ();
     void addCommands (final Command... commands);
     Command getCommand (final String name);
     Edm getEdm ();

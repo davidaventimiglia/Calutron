@@ -11,7 +11,7 @@ import org.apache.olingo.odata2.api.exception.*;
 import org.neptunestation.calutron.commands.*;
 import org.neptunestation.calutron.model.*;
 
-public class Calutron extends AbstractCommand implements CalutronModel {
+public class Calutron implements CalutronModel {
     private static final String HTTP_METHOD_PUT = "PUT";
     private static final String HTTP_METHOD_POST = "POST";
     private static final String HTTP_METHOD_GET = "GET";
@@ -29,15 +29,12 @@ public class Calutron extends AbstractCommand implements CalutronModel {
 
     protected final CommandSet commands = new CommandSet();
     protected final Properties settings = new Properties();
-    protected Console console = null;
     protected Edm edm = null;
 
     // Main Loop
 
     public static void main (String[] args) throws IOException, ODataException {
-        Console console = System.console();
-        if (console==null) System.exit(1);
-        Calutron calutron = new Calutron(console);
+        Calutron calutron = new Calutron();
         calutron.addCommands(new GetEdm(calutron, "rehash"),
                              new Connect(calutron, "connect"),
                              new Quit(calutron, "quit"),
@@ -51,46 +48,12 @@ public class Calutron extends AbstractCommand implements CalutronModel {
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
 
-    // Constructors
-
-    public Calutron (final Console console) {
-        super("calutron");
-        this.console = console;}
-
-    public Calutron (final Console console, final Properties settings) {
-        this(console);
-        this.settings.putAll(settings);}
-
-    // Interpreter API
-
-    @Override public void execute () {
-        while (true) getCommand(getConsole().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}
-
-    @Override public Console getConsole () {
-        return console;}
-
-    @Override public String getPrompt () {
-        return String.format("%s:%s@%s> ",
-                             getSetting("USERNAME")==null ? "[username]" : getSetting("USERNAME"),
-                             getSetting("PASSWORD")==null ? "[password]" : "****",
-                             getSetting("SERVICE_URL")==null ? "[url]" : getEndPointName(getSetting("SERVICE_URL"))).toUpperCase();}
-
-    protected String getEndPointName (String url) {
-        URL u = null;
-        try {u = new URL(url);} catch (MalformedURLException e) {return "[BAD URL]";}
-        if (u.getPort()==80) return String.format("%s/%s", u.getHost(), u.getPath());
-        return String.format("%s:%s/%s", u.getHost(), u.getPort(), u.getPath());}
-
-    public void executeCommand (final String name) {
-        if (name==null) throw new NullArgumentException("name");
-        getCommand(name).execute();}
-    
     // Model API
 
     @Override public Command getCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
         if (getCommands().get(name)!=null) return getCommands().get(name);
-        return new AbstractCommand(this, "default") {@Override public void execute () {getConsole().printf("%s\n", "Command not found");}};}
+        return new AbstractCommand(this, "default") {@Override public void execute () {System.console().printf("%s\n", "Command not found");}};}
 
     @Override public CommandSet getCommands () {
         return commands;}
