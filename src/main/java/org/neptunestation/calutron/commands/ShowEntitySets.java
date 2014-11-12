@@ -2,18 +2,19 @@ package org.neptunestation.calutron.commands;
 
 import java.net.*;
 import java.util.*;
-import org.neptunestation.calutron.model.*;
 import org.apache.olingo.odata2.api.edm.*;
+import org.neptunestation.calutron.*;
+import org.neptunestation.calutron.model.*;
 
 public class ShowEntitySets extends AbstractCommand {
-    public ShowEntitySets (CalutronModel calutronModel, String commandString) {
-        super(calutronModel, commandString);}
+    public ShowEntitySets (CommandContext ctx, String commandString) {
+        super(ctx, commandString);}
     @Override public void execute () {
-        if (getCalutronModel().getSetting("SERVICE_URL")==null) System.console().printf("%s\n", "URL has not been set.");
-        if (getCalutronModel().getSetting("USERNAME")==null) System.console().printf("%s\n", "USERNAME has not been set.");
-        if (getCalutronModel().getSetting("PASSWORD")==null) System.console().printf("%s\n", "PASSWORD has not been set.");
+        if (((Calutron)getContext().getState()).getSetting("SERVICE_URL")==null) System.console().printf("%s\n", "URL has not been set.");
+        if (((Calutron)getContext().getState()).getSetting("USERNAME")==null) System.console().printf("%s\n", "USERNAME has not been set.");
+        if (((Calutron)getContext().getState()).getSetting("PASSWORD")==null) System.console().printf("%s\n", "PASSWORD has not been set.");
         SortedSet<String> names = new TreeSet<String>();
         try {
-            for (EdmEntitySet e : getCalutronModel().getEdm().getEntitySets()) names.add(e.getName());
+            for (EdmEntitySet e : ((Calutron)getContext().getState()).getEdm().getEntitySets()) names.add(e.getName());
             for (String name : names) System.console().printf("%s\n", name);}
         catch (Throwable t) {try {System.console().printf("%s\n", "Error performing operation");} catch (Throwable t2) {}}}}

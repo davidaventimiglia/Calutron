@@ -4,16 +4,21 @@ public abstract class AbstractCommand implements Command {
     protected String commandString = null;
     protected CalutronModel calutronModel = null;
     protected final CommandSet commands = new CommandSet();
-    protected Command ctx = null;
+    protected CommandContext ctx = null;
     public AbstractCommand (final String command) {
         if (command==null) throw new NullArgumentException("command");
+        setCommandString(command);}
+    public AbstractCommand (final CommandContext ctx, final String command) {
+        if (ctx==null) throw new NullArgumentException("ctx");
+        if (command==null) throw new NullArgumentException("command");
+        this.ctx = ctx;
         setCommandString(command);}
     public AbstractCommand (final CalutronModel calutronModel, final String command) {
         if (calutronModel==null) throw new NullArgumentException("calutronModel");
         if (command==null) throw new NullArgumentException("command");
         this.calutronModel = calutronModel;
         setCommandString(command);}
-    public AbstractCommand (final Command ctx, final CalutronModel calutronModel, final String command) {
+    public AbstractCommand (final CommandContext ctx, final CalutronModel calutronModel, final String command) {
         this(calutronModel, command);
         setContext(ctx);}
     @Override public Command getCommand (final String name) {
@@ -22,16 +27,16 @@ public abstract class AbstractCommand implements Command {
         return null;}
     @Override public CommandSet getCommands () {
         return commands;}
-    @Override public Command getContext () {
+    @Override public CommandContext getContext () {
         if (ctx==null) throw new IllegalStateException("Context has not been set");
         return ctx;}
-    @Override public void setContext (Command ctx) {
+    @Override public void setContext (CommandContext ctx) {
         if (ctx==null) throw new NullArgumentException("command");
         if (this.ctx!=null) throw new IllegalStateException("Context has already been set.");
         this.ctx = ctx;}
     @Override public void addCommands (final Command... commands) {
         for (int i=0; i<commands.length; i++) if (commands[i]==null) throw new NullArgumentException(String.format("command[%s]", i));
-        for (int i=0; i<commands.length; i++) if (commands[i]!=null) commands[i].setContext(this);
+        // for (int i=0; i<commands.length; i++) if (commands[i]!=null) commands[i].setContext(new AbstractCommandContext(this, getContext().getState(), getContext().getSettings()){});
         this.commands.add(commands);}
     @Override public boolean acceptsCommandString (final String command) {
         if (command==null) throw new NullArgumentException("command");

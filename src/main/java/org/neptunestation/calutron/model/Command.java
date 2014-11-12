@@ -2,8 +2,8 @@ package org.neptunestation.calutron.model;
 
 public interface Command {
     Command getCommand (String name);
-    void setContext (Command ctx);
-    Command getContext ();
+    void setContext (CommandContext ctx);
+    CommandContext getContext ();
     CommandSet getCommands ();
     void addCommands (Command... commands);
     boolean acceptsCommandString (String command);

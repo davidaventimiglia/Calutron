@@ -34,15 +34,15 @@ public class Calutron implements CalutronModel {
 
     public static void main (String[] args) throws IOException, ODataException {
         Calutron calutron = new Calutron();
-        Interpreter interpreter = new Interpreter(calutron, "interpreter");
-        interpreter.addCommands(new GetEdm(calutron, "rehash"),
-                                new Connect(calutron, "connect"),
-                                new Quit(calutron, "quit"),
-                                new Help(calutron, "help"),
-                                new SetPassword(calutron, "set password"),
-                                new SetUrl(calutron, "set url"),
-                                new ShowEntitySets(calutron, "show entity sets"),
-                                new SetUsername(calutron, "set username"));
+        Interpreter interpreter = new Interpreter(new AbstractCommandContext(null, calutron, new Properties()){}, "interpreter");
+        interpreter.addCommands(new GetEdm(interpreter.getContext(), "rehash"),
+                                new Connect(interpreter.getContext(), "connect"),
+                                new Quit(interpreter.getContext(), "quit"),
+                                new Help(interpreter.getContext(), "help"),
+                                new SetPassword(interpreter.getContext(), "set password"),
+                                new SetUrl(interpreter.getContext(), "set url"),
+                                new ShowEntitySets(interpreter.getContext(), "show entity sets"),
+                                new SetUsername(interpreter.getContext(), "set username"));
         try {interpreter.execute();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
