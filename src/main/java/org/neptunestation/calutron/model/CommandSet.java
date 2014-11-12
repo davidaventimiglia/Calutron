@@ -9,4 +9,5 @@ public class CommandSet extends HashSet<Command> {
         return null;}
     public void add (final Command... commands) {
         if (commands==null) throw new NullArgumentException("commands");
+        for (int i=0; i<commands.length; i++) if (commands[i].getContext()==null) throw new IllegalStateException(String.format("command[%s] context has not been set", i));
         for (int i=0; i<commands.length; i++) add(commands[i]);}}

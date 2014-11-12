@@ -19,4 +19,4 @@ public class Interpreter extends AbstractCommand {
                              getCalutronModel().getSetting("PASSWORD")==null ? "[password]" : "****",
                              getCalutronModel().getSetting("SERVICE_URL")==null ? "[url]" : getEndPointName(getCalutronModel().getSetting("SERVICE_URL"))).toUpperCase();}
     @Override public void execute () {
-        while (true) getCalutronModel().getCommand(System.console().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}}
+        while (true) getCommand(System.console().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}}

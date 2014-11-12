@@ -27,7 +27,6 @@ public class Calutron implements CalutronModel {
 
     // State
 
-    protected final CommandSet commands = new CommandSet();
     protected final Properties settings = new Properties();
     protected Edm edm = null;
 
@@ -35,31 +34,20 @@ public class Calutron implements CalutronModel {
 
     public static void main (String[] args) throws IOException, ODataException {
         Calutron calutron = new Calutron();
-        calutron.addCommands(new GetEdm(calutron, "rehash"),
-                             new Connect(calutron, "connect"),
-                             new Quit(calutron, "quit"),
-                             new Help(calutron, "help"),
-                             new SetPassword(calutron, "set password"),
-                             new SetUrl(calutron, "set url"),
-                             new ShowEntitySets(calutron, "show entity sets"),
-                             new SetUsername(calutron, "set username"));
         Interpreter interpreter = new Interpreter(calutron, "interpreter");
+        interpreter.addCommands(new GetEdm(calutron, "rehash"),
+                                new Connect(calutron, "connect"),
+                                new Quit(calutron, "quit"),
+                                new Help(calutron, "help"),
+                                new SetPassword(calutron, "set password"),
+                                new SetUrl(calutron, "set url"),
+                                new ShowEntitySets(calutron, "show entity sets"),
+                                new SetUsername(calutron, "set username"));
         try {interpreter.execute();}
         catch (StoppedException e) {System.exit(0);}
         catch (Throwable t) {t.printStackTrace(System.err); System.exit(1);}}
 
     // Model API
-
-    @Override public Command getCommand (final String name) {
-        if (name==null) throw new NullArgumentException("name");
-        if (getCommands().get(name)!=null) return getCommands().get(name);
-        return new AbstractCommand(this, "default") {@Override public void execute () {System.console().printf("%s\n", "Command not found");}};}
-
-    @Override public CommandSet getCommands () {
-        return commands;}
-
-    @Override public void addCommands (final Command... commands) {
-        this.commands.add(commands);}
 
     @Override public Properties getSettings () {
         return settings;}

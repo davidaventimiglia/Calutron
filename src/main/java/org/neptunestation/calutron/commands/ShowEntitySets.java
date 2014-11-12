@@ -6,7 +6,8 @@ import org.neptunestation.calutron.model.*;
 import org.apache.olingo.odata2.api.edm.*;
 
 public class ShowEntitySets extends AbstractCommand {
-    public ShowEntitySets (CalutronModel calutronmodel, String commandString) {super(calutronmodel, commandString);}
+    public ShowEntitySets (CalutronModel calutronModel, String commandString) {
+        super(calutronModel, commandString);}
     @Override public void execute () {
         if (getCalutronModel().getSetting("SERVICE_URL")==null) System.console().printf("%s\n", "URL has not been set.");
         if (getCalutronModel().getSetting("USERNAME")==null) System.console().printf("%s\n", "USERNAME has not been set.");
