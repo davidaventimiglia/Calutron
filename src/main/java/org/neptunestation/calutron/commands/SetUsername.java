@@ -7,5 +7,4 @@ public class SetUsername extends AbstractCommand {
     public SetUsername (String commandString) {
         super(commandString);}
     @Override public void execute () {
-        super.execute();
         getContext().setSetting("user", System.console().readLine("Username: "));}}

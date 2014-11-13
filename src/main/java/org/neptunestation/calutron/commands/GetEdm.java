@@ -10,7 +10,6 @@ public class GetEdm extends AbstractCommand {
     public GetEdm (String commandString) {
         super(commandString);}
     @Override public void execute () {
-        super.execute();
         if (getContext().getSetting("url")==null) System.console().printf("%s\n", "URL has not been set.");
         if (getContext().getSetting("user")==null) System.console().printf("%s\n", "user has not been set.");
         if (getContext().getSetting("password")==null) System.console().printf("%s\n", "password has not been set.");

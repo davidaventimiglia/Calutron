@@ -6,5 +6,4 @@ public class Quit extends AbstractCommand {
     public Quit (String commandString) {
         super(commandString);}
     @Override public void execute () {
-        super.execute();
         System.exit(0);}}

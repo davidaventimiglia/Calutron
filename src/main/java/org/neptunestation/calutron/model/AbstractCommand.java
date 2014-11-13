@@ -21,7 +21,6 @@ public abstract class AbstractCommand implements Command {
     public AbstractCommand (final CommandContext ctx, final CalutronModel calutronModel, final String command) {
         this(calutronModel, command);
         setContext(ctx);}
-    @Override public void execute () {}
     @Override public Command getCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
         if (getCommands().get(name)!=null) return getCommands().get(name);
