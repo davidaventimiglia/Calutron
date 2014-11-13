@@ -32,11 +32,11 @@ public abstract class AbstractCommand implements Command {
         return ctx;}
     @Override public void setContext (CommandContext ctx) {
         if (ctx==null) throw new NullArgumentException("command");
-        if (this.ctx!=null) throw new IllegalStateException("Context has already been set.");
+        // if (this.ctx!=null) throw new IllegalStateException("Context has already been set.");
         this.ctx = ctx;}
     @Override public void addCommands (final Command... commands) {
         for (int i=0; i<commands.length; i++) if (commands[i]==null) throw new NullArgumentException(String.format("command[%s]", i));
-        // for (int i=0; i<commands.length; i++) if (commands[i]!=null) commands[i].setContext(new AbstractCommandContext(this, getContext().getState(), getContext().getSettings()){});
+        for (int i=0; i<commands.length; i++) if (commands[i]!=null) commands[i].setContext(new AbstractCommandContext(this, getContext().getState(), getContext().getSettings()){});
         this.commands.add(commands);}
     @Override public boolean acceptsCommandString (final String command) {
         if (command==null) throw new NullArgumentException("command");
