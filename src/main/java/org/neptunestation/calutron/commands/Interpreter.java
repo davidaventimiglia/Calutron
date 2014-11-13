@@ -7,6 +7,8 @@ import org.neptunestation.calutron.*;
 import org.neptunestation.calutron.model.*;
 
 public class Interpreter extends AbstractCommand {
+    public Interpreter (String commandString) {
+        super(commandString);}
     public Interpreter (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     protected String getEndPointName (String url) {

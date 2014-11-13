@@ -6,6 +6,8 @@ import org.apache.olingo.odata2.api.edm.*;
 import org.neptunestation.calutron.model.*;
 
 public class Connect extends AbstractCommand {
+    public Connect (String commandString) {
+        super(commandString);}
     public Connect (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {

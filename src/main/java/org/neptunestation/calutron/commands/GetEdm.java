@@ -7,6 +7,8 @@ import org.neptunestation.calutron.*;
 import org.neptunestation.calutron.model.*;
 
 public class GetEdm extends AbstractCommand {
+    public GetEdm (String commandString) {
+        super(commandString);}
     public GetEdm (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {

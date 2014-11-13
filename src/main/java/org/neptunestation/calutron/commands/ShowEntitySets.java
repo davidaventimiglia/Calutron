@@ -7,6 +7,8 @@ import org.neptunestation.calutron.*;
 import org.neptunestation.calutron.model.*;
 
 public class ShowEntitySets extends AbstractCommand {
+    public ShowEntitySets (String commandString) {
+        super(commandString);}
     public ShowEntitySets (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {
