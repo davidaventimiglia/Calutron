@@ -25,7 +25,9 @@ public abstract class AbstractCommand implements Command {
     @Override public Command getCommand (final String name) {
         if (name==null) throw new NullArgumentException("name");
         if (getCommands().get(name)!=null) return getCommands().get(name);
-        return null;}
+        return new AbstractCommand ("default") {
+            @Override public void execute () {
+                System.console().printf("No such command:  %s\n", name);}};}
     @Override public CommandSet getCommands () {
         return commands;}
     @Override public CommandContext getContext () {
@@ -33,7 +35,6 @@ public abstract class AbstractCommand implements Command {
         return ctx;}
     @Override public void setContext (CommandContext ctx) {
         if (ctx==null) throw new NullArgumentException("command");
-        // if (this.ctx!=null) throw new IllegalStateException("Context has already been set.");
         this.ctx = ctx;}
     @Override public void addCommands (final Command... commands) {
         for (int i=0; i<commands.length; i++) if (commands[i]==null) throw new NullArgumentException(String.format("command[%s]", i));

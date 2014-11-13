@@ -50,10 +50,8 @@ public class Calutron implements CalutronModel {
 
     @Override public Edm readEdm (final String serviceUrl, final String username, final String password) throws IOException, ODataException {
         return EntityProvider.readMetadata(call(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
-
     @Override public void setEdm (final Edm edm) {
         this.edm = edm;}
-
     @Override public Edm getEdm () {
         return this.edm;}
 
@@ -65,13 +63,11 @@ public class Calutron implements CalutronModel {
         checkStatus(connection);
         InputStream content = connection.getInputStream();
         return content;}
-
     protected HttpURLConnection connect (final String relativeUri, final String contentType, final String httpMethod, final String username, final String password) throws IOException {
         HttpURLConnection connection = initializeConnection(relativeUri, contentType, httpMethod, username, password);
         connection.connect();
         checkStatus(connection);
         return connection;}
-
     protected HttpURLConnection initializeConnection (final String absoluteUri, final String contentType, final String httpMethod, final String username, final String password) throws MalformedURLException, IOException {
         URL url = new URL(absoluteUri);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -84,7 +80,6 @@ public class Calutron implements CalutronModel {
             connection.setDoOutput(true);
             connection.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, contentType);}
         return connection;}
-
     protected HttpStatusCodes checkStatus (final HttpURLConnection connection) throws IOException {
         HttpStatusCodes httpStatusCode = HttpStatusCodes.fromStatusCode(connection.getResponseCode());
         if (400 <= httpStatusCode.getStatusCode() && httpStatusCode.getStatusCode() <= 599) throw new RuntimeException("Http Connection failed with status " + httpStatusCode.getStatusCode() + " " + httpStatusCode.toString());
