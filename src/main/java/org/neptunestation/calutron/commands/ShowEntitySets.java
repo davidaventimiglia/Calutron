@@ -11,9 +11,9 @@ public class ShowEntitySets extends AbstractCommand {
         super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
-        if (getContext().getSuperCommand().getContext().getSetting("SERVICE_URL")==null) System.console().printf("%s\n", "URL has not been set.");
-        if (getContext().getSuperCommand().getContext().getSetting("USERNAME")==null) System.console().printf("%s\n", "USERNAME has not been set.");
-        if (getContext().getSuperCommand().getContext().getSetting("PASSWORD")==null) System.console().printf("%s\n", "PASSWORD has not been set.");
+        if (getContext().getSetting("url")==null) System.console().printf("%s\n", "URL has not been set.");
+        if (getContext().getSetting("user")==null) System.console().printf("%s\n", "user has not been set.");
+        if (getContext().getSetting("password")==null) System.console().printf("%s\n", "password has not been set.");
         SortedSet<String> names = new TreeSet<String>();
         try {
             for (EdmEntitySet e : ((Calutron)getContext().getState()).getEdm().getEntitySets()) names.add(e.getName());

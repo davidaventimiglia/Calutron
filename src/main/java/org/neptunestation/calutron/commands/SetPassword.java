@@ -8,4 +8,4 @@ public class SetPassword extends AbstractCommand {
         super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
-        getContext().getSuperCommand().getContext().setSetting("PASSWORD", new String(System.console().readPassword("%s", "Password:")));}}
+        getContext().setSetting("password", new String(System.console().readPassword("%s", "Password:")));}}

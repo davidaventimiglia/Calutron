@@ -9,5 +9,5 @@ public class SetUrl extends AbstractCommand {
         super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
-        try {getContext().getSuperCommand().getContext().setSetting("SERVICE_URL", new URL(System.console().readLine("Service URL: ")).toExternalForm());}
+        try {getContext().setSetting("url", new URL(System.console().readLine("Service URL: ")).toExternalForm());}
         catch (MalformedURLException e) {System.console().printf("%s\n", "Invalid URL");}}}

@@ -27,14 +27,13 @@ public class Calutron implements CalutronModel {
 
     // State
 
-    protected final Properties settings = new Properties();
     protected Edm edm = null;
 
     // Main Loop
 
     public static void main (String[] args) throws IOException, ODataException {
         Calutron calutron = new Calutron();
-        Interpreter interpreter = new Interpreter(new AbstractCommandContext(null, calutron, new Properties()){}, "interpreter");
+        Interpreter interpreter = new Interpreter(new AbstractCommandContext(null, calutron, System.getProperties()){}, "interpreter");
         interpreter.addCommands(new GetEdm(interpreter.getContext(), "rehash"),
                                 new Connect(interpreter.getContext(), "connect"),
                                 new Quit(interpreter.getContext(), "quit"),

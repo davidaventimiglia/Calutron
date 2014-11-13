@@ -16,8 +16,8 @@ public class Interpreter extends AbstractCommand {
         return String.format("%s:%s/%s", u.getHost(), u.getPort(), u.getPath());}
     public String getPrompt () {
         return String.format("%s:%s@%s> ",
-                             getContext().getSetting("USERNAME")==null ? "[username]" : getContext().getSetting("USERNAME"),
-                             getContext().getSetting("PASSWORD")==null ? "[password]" : "****",
-                             getContext().getSetting("SERVICE_URL")==null ? "[url]" : getEndPointName(getContext().getSetting("SERVICE_URL"))).toUpperCase();}
+                             getContext().getSetting("user")==null ? "[username]" : getContext().getSetting("user"),
+                             getContext().getSetting("password")==null ? "[password]" : "****",
+                             getContext().getSetting("url")==null ? "[url]" : getEndPointName(getContext().getSetting("url"))).toUpperCase();}
     @Override public void execute () {
         while (true) getCommand(System.console().readLine(getPrompt()).replaceAll("\\s+", " ").trim()).execute();}}

@@ -8,4 +8,4 @@ public class SetUsername extends AbstractCommand {
         super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
-        getContext().getSuperCommand().getContext().setSetting("USERNAME", System.console().readLine("Username: "));}}
+        getContext().setSetting("user", System.console().readLine("Username: "));}}

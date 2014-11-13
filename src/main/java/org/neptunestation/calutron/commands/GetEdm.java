@@ -11,10 +11,10 @@ public class GetEdm extends AbstractCommand {
         super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
-        if (getContext().getSuperCommand().getContext().getSetting("SERVICE_URL")==null) System.console().printf("%s\n", "URL has not been set.");
-        if (getContext().getSuperCommand().getContext().getSetting("USERNAME")==null) System.console().printf("%s\n", "USERNAME has not been set.");
-        if (getContext().getSuperCommand().getContext().getSetting("PASSWORD")==null) System.console().printf("%s\n", "PASSWORD has not been set.");
-        try {((Calutron)getContext().getState()).setEdm(((Calutron)getContext().getState()).readEdm(getContext().getSuperCommand().getContext().getSetting("SERVICE_URL"),
-                                                                                                    getContext().getSuperCommand().getContext().getSetting("USERNAME"),
-                                                                                                    getContext().getSuperCommand().getContext().getSetting("PASSWORD")));}
+        if (getContext().getSetting("url")==null) System.console().printf("%s\n", "URL has not been set.");
+        if (getContext().getSetting("user")==null) System.console().printf("%s\n", "user has not been set.");
+        if (getContext().getSetting("password")==null) System.console().printf("%s\n", "password has not been set.");
+        try {((Calutron)getContext().getState()).setEdm(((Calutron)getContext().getState()).readEdm(getContext().getSetting("url"),
+                                                                                                    getContext().getSetting("user"),
+                                                                                                    getContext().getSetting("password")));}
         catch (Throwable t) {try {System.console().printf("%s\n", "Error performing operation");} catch (Throwable t2) {}}}}

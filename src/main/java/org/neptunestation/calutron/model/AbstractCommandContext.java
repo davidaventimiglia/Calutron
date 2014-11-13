@@ -20,7 +20,8 @@ public class AbstractCommandContext implements CommandContext {
     @Override public String getSetting (final String name) {
         return getSettings().getProperty(name);}
     @Override public Properties getSettings () {
-        return settings;}
+        if (getSuperCommand()==null) return settings;
+        return getSuperCommand().getContext().getSettings();}
     @Override public void setSetting (final String name, final String value) {
         if (name==null) throw new NullArgumentException("name");
         if (value==null) throw new NullArgumentException("value");
