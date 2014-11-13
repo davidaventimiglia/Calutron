@@ -9,8 +9,6 @@ import org.neptunestation.calutron.model.*;
 public class GetEdm extends AbstractCommand {
     public GetEdm (String commandString) {
         super(commandString);}
-    public GetEdm (CommandContext ctx, String commandString) {
-        super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
         if (getContext().getSetting("url")==null) System.console().printf("%s\n", "URL has not been set.");

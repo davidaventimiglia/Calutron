@@ -7,8 +7,6 @@ import org.neptunestation.calutron.model.*;
 public class SetUrl extends AbstractCommand {
     public SetUrl (String commandString) {
         super(commandString);}
-    public SetUrl (CommandContext ctx, String commandString) {
-        super(ctx, commandString);}
     @Override public void execute () {
         super.execute();
         try {getContext().setSetting("url", new URL(System.console().readLine("Service URL: ")).toExternalForm());}
