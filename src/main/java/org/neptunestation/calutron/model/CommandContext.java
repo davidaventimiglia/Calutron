@@ -2,8 +2,10 @@ package org.neptunestation.calutron.model;
 
 import java.util.*;
 
-public interface CommandContext<T> {
+public interface CommandContext {
     Command getSuperCommand ();
-    T getState ();
-    Properties getSettings ();}
+    Object getState ();
+    String getSetting (final String name);
+    Properties getSettings ();
+    void setSetting (final String name, final String value);}
 

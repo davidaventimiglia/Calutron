@@ -49,17 +49,6 @@ public class Calutron implements CalutronModel {
 
     // Model API
 
-    @Override public Properties getSettings () {
-        return settings;}
-
-    @Override public String getSetting (final String name) {
-        return getSettings().getProperty(name);}
-
-    @Override public void setSetting (final String name, final String value) {
-        if (name==null) throw new NullArgumentException("name");
-        if (value==null) throw new NullArgumentException("value");
-        getSettings().setProperty(name, value);}
-
     @Override public Edm readEdm (final String serviceUrl, final String username, final String password) throws IOException, ODataException {
         return EntityProvider.readMetadata(call(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
 

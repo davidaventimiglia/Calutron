@@ -8,4 +8,5 @@ public class Help extends AbstractCommand {
     public Help (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {
+        super.execute();
         for (Command c : getContext().getSuperCommand().getCommands()) System.console().printf("%s\n", c.getCommandString());}}

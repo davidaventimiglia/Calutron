@@ -9,6 +9,7 @@ public class Connect extends AbstractCommand {
     public Connect (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {
+        super.execute();
         getContext().getSuperCommand().getCommand("set username").execute();
         getContext().getSuperCommand().getCommand("set password").execute();
         getContext().getSuperCommand().getCommand("set url").execute();

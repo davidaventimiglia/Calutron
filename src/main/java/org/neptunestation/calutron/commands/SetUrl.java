@@ -8,5 +8,6 @@ public class SetUrl extends AbstractCommand {
     public SetUrl (CommandContext ctx, String commandString) {
         super(ctx, commandString);}
     @Override public void execute () {
-        try {((Calutron)getContext().getState()).setSetting("SERVICE_URL", new URL(System.console().readLine("Service URL: ")).toExternalForm());}
+        super.execute();
+        try {getContext().getSuperCommand().getContext().setSetting("SERVICE_URL", new URL(System.console().readLine("Service URL: ")).toExternalForm());}
         catch (MalformedURLException e) {System.console().printf("%s\n", "Invalid URL");}}}
