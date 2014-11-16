@@ -33,12 +33,14 @@ public abstract class AbstractCommand implements Command {
         return (Arrays.asList(getCommandTokens())+"").hashCode();}
     @Override public void execute (String... args) {
         execute();}
-    @Override public Command getCommand (final String commandstring) {
-        if (commandstring==null) throw new NullArgumentException("name");
-        if (getCommands().get(commandstring)!=null) return getCommands().get(commandstring);
+    @Override public String[] getArguments(String... tokens) {
+        return getCommands().getArguments(tokens);}
+    @Override public Command getCommand (final String... tokens) {
+        if (tokens==null) throw new NullArgumentException("tokens");
+        if (getCommands().get(tokens)!=null) return getCommands().get(tokens);
         return new AbstractCommand ("default") {
             @Override public void execute () {
-                System.console().printf("No such command:  %s\n", commandstring);}};}
+                System.console().printf("No such command:  %s\n", tokens);}};}
     @Override public CommandSet getCommands () {
         return commands;}
     @Override public CommandContext getContext () {
