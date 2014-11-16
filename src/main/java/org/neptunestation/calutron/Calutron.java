@@ -39,6 +39,7 @@ public class Calutron implements CalutronModel {
                                 new Connect("connect"),
                                 new Quit("quit"),
                                 new Help("help"),
+                                new ListEntities("list entity sets"),
                                 new SetPassword("set password"),
                                 new SetUrl("set url"),
                                 new ShowEntitySets("show entity sets"),
