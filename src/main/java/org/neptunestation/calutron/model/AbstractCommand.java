@@ -1,7 +1,10 @@
 package org.neptunestation.calutron.model;
 
+import java.util.*;
+
 public abstract class AbstractCommand implements Command {
     protected String commandString = null;
+    protected String[] commandTokens = null;
     protected CalutronModel calutronModel = null;
     protected final CommandSet commands = new CommandSet();
     protected CommandContext ctx = null;
@@ -21,12 +24,21 @@ public abstract class AbstractCommand implements Command {
     public AbstractCommand (final CommandContext ctx, final CalutronModel calutronModel, final String command) {
         this(calutronModel, command);
         setContext(ctx);}
-    @Override public Command getCommand (final String name) {
-        if (name==null) throw new NullArgumentException("name");
-        if (getCommands().get(name)!=null) return getCommands().get(name);
+    @Override public boolean equals (Object obj) {
+        if (!(obj instanceof Command)) return false;
+        if (this==obj) return true;
+        if (Arrays.equals(getCommandTokens(), ((Command)obj).getCommandTokens())) return true;
+        return false;}
+    @Override public int hashCode () {
+        return (Arrays.asList(getCommandTokens())+"").hashCode();}
+    @Override public void execute (String... args) {
+        execute();}
+    @Override public Command getCommand (final String commandstring) {
+        if (commandstring==null) throw new NullArgumentException("name");
+        if (getCommands().get(commandstring)!=null) return getCommands().get(commandstring);
         return new AbstractCommand ("default") {
             @Override public void execute () {
-                System.console().printf("No such command:  %s\n", name);}};}
+                System.console().printf("No such command:  %s\n", commandstring);}};}
     @Override public CommandSet getCommands () {
         return commands;}
     @Override public CommandContext getContext () {
@@ -49,6 +61,9 @@ public abstract class AbstractCommand implements Command {
         return calutronModel;}
     @Override public String getCommandString () {
         return commandString.toUpperCase();}
+    @Override public String[] getCommandTokens () {
+        return commandTokens;}
     @Override public void setCommandString (String command) {
         if (command==null) throw new NullArgumentException("command");
-        commandString = command.replaceAll("\\s+", " ").toUpperCase().trim();}}
+        commandString = command.replaceAll("\\s+", " ").toUpperCase().trim();
+        commandTokens = commandString.toUpperCase().trim().split("\\s+");}}

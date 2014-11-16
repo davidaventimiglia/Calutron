@@ -10,5 +10,7 @@ public interface Command {
     void setCalutronModel (CalutronModel calutronModel);
     CalutronModel getCalutronModel ();
     String getCommandString ();
+    String[] getCommandTokens ();
     void setCommandString (String command);
-    void execute ();}
+    void execute ();
+    void execute (String... args);}

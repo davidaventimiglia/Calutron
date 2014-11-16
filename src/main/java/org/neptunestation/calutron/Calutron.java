@@ -7,6 +7,7 @@ import javax.xml.bind.*;
 import org.apache.olingo.odata2.api.commons.*;
 import org.apache.olingo.odata2.api.edm.*;
 import org.apache.olingo.odata2.api.ep.*;
+import org.apache.olingo.odata2.api.ep.feed.*;
 import org.apache.olingo.odata2.api.exception.*;
 import org.neptunestation.calutron.commands.*;
 import org.neptunestation.calutron.model.*;
@@ -48,8 +49,10 @@ public class Calutron implements CalutronModel {
 
     // Model API
 
-    @Override public Edm readEdm (final String serviceUrl, final String username, final String password) throws IOException, ODataException {
-        return EntityProvider.readMetadata(call(serviceUrl + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
+    @Override public Edm readEdm (final String serviceUri, final String username, final String password) throws IOException, ODataException {
+        return EntityProvider.readMetadata(call(serviceUri + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
+    @Override public ODataFeed readFeed (final Edm edm, final String serviceUri, final EdmEntityContainer entityContainer, final EdmEntitySet entitySet, final String username, final String password) throws IOException, ODataException {
+        return EntityProvider.readFeed(CONTENT_TYPE, entitySet, call(serviceUri + "/" + entityContainer.getName() + "." + entitySet.getName(), CONTENT_TYPE, HTTP_METHOD_GET, username, password), EntityProviderReadProperties.init().build());}
     @Override public void setEdm (final Edm edm) {
         this.edm = edm;}
     @Override public Edm getEdm () {
