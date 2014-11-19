@@ -53,7 +53,7 @@ public class Calutron implements CalutronModel {
     @Override public Edm readEdm (final String serviceUri, final String username, final String password) throws IOException, ODataException {
         return EntityProvider.readMetadata(call(serviceUri + "/" + METADATA, CONTENT_TYPE, HTTP_METHOD_GET, username, password), false);}
     @Override public ODataFeed readFeed (final Edm edm, final String serviceUri, final EdmEntityContainer entityContainer, final EdmEntitySet entitySet, final String username, final String password) throws IOException, ODataException {
-        return EntityProvider.readFeed(CONTENT_TYPE, entitySet, call(serviceUri + "/" + entityContainer.getName() + "." + entitySet.getName(), CONTENT_TYPE, HTTP_METHOD_GET, username, password), EntityProviderReadProperties.init().build());}
+        return EntityProvider.readFeed(CONTENT_TYPE, entitySet, call(serviceUri + "/public" + "." + "person", CONTENT_TYPE, HTTP_METHOD_GET, username, password), EntityProviderReadProperties.init().build());}
     @Override public void setEdm (final Edm edm) {
         this.edm = edm;}
     @Override public Edm getEdm () {

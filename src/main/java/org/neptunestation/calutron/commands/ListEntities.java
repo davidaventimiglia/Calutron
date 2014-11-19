@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.apache.olingo.odata2.api.edm.*;
+import org.apache.olingo.odata2.api.ep.entry.*;
 import org.apache.olingo.odata2.api.exception.*;
 import org.neptunestation.calutron.*;
 import org.neptunestation.calutron.model.*;
@@ -20,7 +21,8 @@ public class ListEntities extends AbstractCommand {
         List<EdmEntitySet> entitySets = edm.getEntitySets();
         for (EdmEntitySet e : entitySets)
             if (e.getName().equals("person"))
-                System.console().printf("%s\n", cal.readFeed(edm, getContext().getSetting("url"), container, e, getContext().getSetting("user"), getContext().getSetting("password")));}
+                for (ODataEntry entry : cal.readFeed(edm, getContext().getSetting("url"), container, e, getContext().getSetting("user"), getContext().getSetting("password")).getEntries())
+                    System.console().printf("%s\n", entry.getProperties());}
     @Override public void execute (String... args) {
         if (args==null) throw new NullArgumentException("args");
         if (args.length>0) try {listEntitySet(args[0]);} catch (Throwable t) {t.printStackTrace(System.err);}
