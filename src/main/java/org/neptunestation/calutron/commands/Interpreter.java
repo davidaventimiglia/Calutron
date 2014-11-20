@@ -22,7 +22,7 @@ public class Interpreter extends AbstractCommand {
                              getContext().getSetting("password")==null ? "[password]" : "****",
                              getContext().getSetting("url")==null ? "[url]" : getEndPointName(getContext().getSetting("url"))).toUpperCase();}
     public void execute (String commandString) {
-        String[] commandTokens = commandString.toUpperCase().trim().split("\\s+");
+        String[] commandTokens = commandString.trim().split("\\s+");
         execute(commandTokens);}
     public void execute (String... tokens) {
         getCommand(tokens).execute(getArguments(tokens));}
