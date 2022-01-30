@@ -7,13 +7,7 @@ for ODATA data sources.
 
 * Run `mvn install`.
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
 ### Who do I talk to? ###
 
-* Calutron is developed at
-  [NeptuneStation](http://www.neptunestation.com/).
+* Calutron is developed by David A. Ventimiglia <davidaventimiglia@neptunestation.com>.
+
